@@ -110,14 +110,19 @@ print(format(real_result_part1, scientific = FALSE))
 #- SOLUTION PART 2 ------------------------------------------------------------#
 
 day07_part2_solution <- function(input) {
-  NULL
+  cache <<- list()
+  tree <- input %>% 
+    parse_input() %>% 
+    Reduce(f = build_tree, init = list())
+  a <- tree %>%
+    evaluate_tree_element("a")
+  
+  # the signal you got on wire a, override wire b to that signal
+  new_tree <- build_tree(tree, list(o = "b", op = NA, i1 = a, i2 = NA))
+  # reset the other wires (including wire a)
+  cache <<- list()
+  new_tree %>% evaluate_tree_element("a")
 }
-
-test_output_part2 <- -1
-test_result <- day07_part2_solution(test_input)
-print(paste(
-  "test result:", test_result,
-  "valid:", test_result == test_output_part2))
 
 real_result_part2 <- day07_part2_solution(real_input)
 print(format(real_result_part2, scientific = FALSE))
