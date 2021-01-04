@@ -91,6 +91,7 @@ evaluate_tree_element <- function(tree, element) {
 #- SOLUTION PART 1 ------------------------------------------------------------#
 
 day07_part1_solution <- function(input, what = "a") {
+  cache <<- list()
   input %>% 
     parse_input() %>% 
     Reduce(f = build_tree, init = list()) %>%
