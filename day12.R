@@ -12,7 +12,7 @@ parse_input <- function(input) {
   input %>% 
     # we must make array of one element distinguishable from just value
     gsub(pattern = "[\"red\"]", replacement = "[\"red\",\"\"]", fixed = T) %>%
-    jsonlite::fromJSON()
+    jsonlite::fromJSON(simplifyVector = F)
 }
 
 #- LOGIC ----------------------------------------------------------------------#
@@ -24,8 +24,11 @@ parse_input <- function(input) {
 #' instead we must check whether given list 
 #'  - has names for elements (property of object)
 #'  - or not (property of array)
-is_json_object <- function(x) is.list(x) && !is.null(names(x))
-  
+is_object <- function(x) is.list(x) && !is.null(names(x))
+
+#' check whether x is an array
+is_array <- function(x) is.list(x) && is.null(names(x))
+
 #' check if given list has element with value = "red"
 has_red <- function(x)
   x %>% 
@@ -37,12 +40,13 @@ sum_all_numbers <- function(x, check_for_red = FALSE) {
   iter <- function(x) {
     if (is.numeric(x)) {
       sum(x, na.rm = T)
-    }
-    else if (is.list(x)) {
-      if (is_json_object(x) && has_red(x) && check_for_red) 0 
+    } else if (is.list(x)) {
+      if (is_object(x) && has_red(x) && check_for_red) 0 
       else x %>% Map(f = iter) %>% Reduce(f = `+`, init = 0)
+    } else if (is_array(x)) {
+      x %>% Map(f = iter) %>% Reduce(f = `+`, init = 0)
     } else if (is.character(x)) {
-      suppressWarnings(as.numeric(x)) %>% sum(na.rm = T)
+      0
     } else if (is.null(x)) {
       0
     } else {
