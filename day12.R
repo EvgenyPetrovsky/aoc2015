@@ -74,8 +74,8 @@ day12_part2_solution <- function(input) {
   input %>% parse_input() %>% sum_all_numbers(check_for_red = T)
 }
 
-exp_test_result <- 3
-act_test_result <- day12_part2_solution('{"a":1,"b":{"ba":65, "bb":["red"], "bc":[1,2]},"c":"orange","d":["red", 10]}')
+exp_test_result <- 11
+act_test_result <- day12_part2_solution('{"a":1,"b":{"ba":65, "bb":"red", "bc":[1,2]},"c":"orange","d":["red", 10]}')
 print(paste(
   "actual test result:", act_test_result,
   "expected result:", exp_test_result,
