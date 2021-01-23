@@ -1,6 +1,11 @@
 library(magrittr)
 
 test_input <- c(
+  "H => HO",
+  "H => OH",
+  "O => HH",
+  "",
+  "HOHOHO"
 )
 
 real_input <- readLines("./inputs/day19-input.txt")
@@ -12,10 +17,7 @@ parse_input <- function(input) {
   replacements <-
     input[1:(div_position - 1)] %>%
     strsplit(split = " => ") %>%
-    #Reduce(f = function(z, x) {
-    #  c(z, list() %>% inset2(x[1], x[2]))
-    #}, init = list())
-    Map(f = function(x) list[from = x[1], to = x[2]])
+    Map(f = function(x) list(from = x[1], to = x[2]))
   starting_value <- input[div_position + 1]
   list(replacements = replacements, starting_value = starting_value)
 }
@@ -37,13 +39,22 @@ get_all_replacements_for_position <- function(string, position, replacements) {
     Reduce(f = c)
 }
 
+get_all_replacements_for_string <- function(string, replacements) {
+  seq.int(nchar(string)) %>%
+    Map(f = function(position) get_all_replacements_for_position(string, position, replacements)) %>%
+    Reduce(f = c)
+}
 #- SOLUTION PART 1 ------------------------------------------------------------#
 
 day19_part1_solution <- function(input) {
-  NULL
+  i <- input %>% 
+    parse_input()
+  get_all_replacements_for_string(i$starting_value, i$replacements) %>%
+    unique() %>%
+    length()
 }
 
-exp_test_result <- -1
+exp_test_result <- 7
 act_test_result <- day19_part1_solution(test_input)
 print(paste(
   "actual test result:", act_test_result,
