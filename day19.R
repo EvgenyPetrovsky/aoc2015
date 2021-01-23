@@ -8,11 +8,34 @@ real_input <- readLines("./inputs/day19-input.txt")
 #- PARSE INPUT ----------------------------------------------------------------#
 
 parse_input <- function(input) {
-  NULL
+  div_position <- which(input == "")
+  replacements <-
+    input[1:(div_position - 1)] %>%
+    strsplit(split = " => ") %>%
+    #Reduce(f = function(z, x) {
+    #  c(z, list() %>% inset2(x[1], x[2]))
+    #}, init = list())
+    Map(f = function(x) list[from = x[1], to = x[2]])
+  starting_value <- input[div_position + 1]
+  list(replacements = replacements, starting_value = starting_value)
 }
 
 #- LOGIC ----------------------------------------------------------------------#
 
+#' function takes position in initial string and makes all possible replacements
+#' for substrings starting from that position
+get_all_replacements_for_position <- function(string, position, replacements) {
+  start_str <- substr(string, 1, position - 1)
+  make_one_replacement <- function(from, to) {
+    pattern <- paste0("^", start_str, from)
+    replacement <- paste0(start_str, to)
+    gsub(pattern, replacement, x = string)
+  }
+
+  replacements %>%
+    Map(f = function(x) make_one_replacement(x$form, x$to)) %>%
+    Reduce(f = c)
+}
 
 #- SOLUTION PART 1 ------------------------------------------------------------#
 
