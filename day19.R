@@ -31,11 +31,12 @@ get_all_replacements_for_position <- function(string, position, replacements) {
   make_one_replacement <- function(from, to) {
     pattern <- paste0("^", start_str, from)
     replacement <- paste0(start_str, to)
-    gsub(pattern, replacement, x = string)
+    if (grepl(pattern, string)) gsub(pattern, replacement, x = string)
+    else character()
   }
 
   replacements %>%
-    Map(f = function(x) make_one_replacement(x$form, x$to)) %>%
+    Map(f = function(x) make_one_replacement(x$from, x$to)) %>%
     Reduce(f = c)
 }
 
